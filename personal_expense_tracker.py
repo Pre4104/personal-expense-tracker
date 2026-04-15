@@ -23,18 +23,18 @@ init_files()
 
 # ── sub-function 1: validated date input ─────────────────────────────────────
 def get_date():
-    while True:                                          # BUG FIX: loop until valid date
+    while True:                                          
         date_str = input("Enter the date (DD-MM-YYYY): ")
         try:
             datetime.strptime(date_str, "%d-%m-%Y")
-            return date_str                              # BUG FIX: return inside try
+            return date_str                             
         except ValueError:
             print("Invalid date format! Please use DD-MM-YYYY.")
 
 
 # ── function 1: load all expenses from CSV ───────────────────────────────────
 def load_expenses():
-    expenses = []                                        # BUG FIX: don't shadow built-in 'list'
+    expenses = []                                        \
     with open("expenses.csv", "r", newline="") as file:
         reader = csv.DictReader(file)
         for row in reader:
@@ -61,7 +61,7 @@ def save_expenses():
     des  = input("Enter description: ")
 
     with open("expenses.csv", "a", newline="") as file:
-        # BUG FIX: define writer BEFORE using it; removed wrong file.tell() header check
+
         writer = csv.DictWriter(file, fieldnames=["date", "category", "amount", "description"])
         writer.writerow({"date": date, "category": cat, "amount": amt, "description": des})
     print("Expense added successfully!")
@@ -74,7 +74,7 @@ def total_expenses():
     expenses = load_expenses()
     for row in expenses:
         t     += 1
-        total += float(row["amount"])              # BUG FIX: was adding str; cast to float
+        total += float(row["amount"])            
     if t == 0:
         print("No expense is recorded")
         return 0
@@ -87,7 +87,7 @@ def amt_by_cat():
     if len(expenses) == 0:
         print("No expense is recorded")
         return {}
-    cat_dict = {}                                  # BUG FIX: completely rewritten; original
+    cat_dict = {}                                
     for row in expenses:                           #   logic iterated dict keys as rows
         cat = row["category"]
         amt = float(row["amount"])
@@ -103,10 +103,10 @@ def amt_by_cat():
 
 # ── function 6: category with highest spending ───────────────────────────────
 def max_spent_cat():
-    cat_dict = amt_by_cat()                        # BUG FIX: reuse amt_by_cat instead of
-    if not cat_dict:                               #   broken duplicate logic
+    cat_dict = amt_by_cat()                        
+    if not cat_dict:                              
         return
-    max_cat = max(cat_dict, key=cat_dict.get)      # BUG FIX: random_key comparison was wrong
+    max_cat = max(cat_dict, key=cat_dict.get)      
     print(f"The maximum amount spent on '{max_cat}' is ₹{cat_dict[max_cat]:.2f}")
 
 
@@ -117,7 +117,7 @@ def top3_purchases():
         print("Not enough expenses recorded (need at least 3).")
         return
     print("The top 3 largest purchases are:")
-    # BUG FIX: sort rows directly; original compared str amounts to float amounts
+    s
     sorted_exp = sorted(expenses, key=lambda r: float(r["amount"]), reverse=True)
     for rank, row in enumerate(sorted_exp[:3], start=1):
         print(f"{rank}. ₹{int(float(row['amount']))} | {row['category']} "
@@ -143,9 +143,7 @@ def daily_avg():
         return
     expenses_by_date = defaultdict(float)
     for row in expenses:
-        expenses_by_date[row["date"]] += float(row["amount"])  # BUG FIX: row[date] → row["date"]
-    for date, amt in expenses_by_date.items():
-        print(f"  {date}: ₹{amt:.2f}")
+        expenses_by_date[row["date"]] += float(row["amount"]) 
     total = sum(expenses_by_date.values())
     n     = len(expenses_by_date)
     print(f"Daily Average: ₹{total/n:.2f}")
@@ -163,7 +161,7 @@ def input_income():
                                                    "source of secondary income",
                                                    "secondary income", "total monthly income"])
         writer.writerow({"month": month, "primary income": salary,
-                         "source of secondary income": s_source,   # BUG FIX: was writing s_income
+                         "source of secondary income": s_source,   
                          "secondary income": s_income,
                          "total monthly income": income})
     print("Income added successfully!")
@@ -177,7 +175,7 @@ def savings():
         t = 0
         for row in reader:
             t += 1
-            totalincome += int(row["total monthly income"])  # BUG FIX: wrong key "income" → correct
+            totalincome += int(row["total monthly income"])  
     if t == 0:
         print("No income is recorded")
         return 0
@@ -189,7 +187,7 @@ def savings():
 # ── function 12: create budget ───────────────────────────────────────────────
 def budget_create():
     budget_dict = {}
-    # BUG FIX: input() takes only one string; f-string used instead of passing multiple args
+    
     categories = ["Food", "Transport", "Stationary", "Other"]
     print("Set a budget for each category (enter 0 to skip):")
     for cat in categories:
@@ -210,7 +208,7 @@ def budget_create():
 def budget_alerts():
     budget_dict  = budget_create()
     expense_dict = amt_by_cat()
-    exceeded     = {}                              # BUG FIX: was initialised as 0 (int), not dict
+    exceeded     = {}
     for cat in budget_dict:
         if cat in expense_dict and expense_dict[cat] > budget_dict[cat]:
             exceeded[cat] = round(expense_dict[cat] - budget_dict[cat], 2)
@@ -266,6 +264,6 @@ while True:
         budget_alerts()
     elif choice == "13":
         print("Exiting... Goodbye!")
-        break                                      # BUG FIX: was missing 'break'; loop never ended
+        break                                     
     else:
         print("Invalid choice. Please try again.")
