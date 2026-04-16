@@ -102,7 +102,6 @@ All data is stored locally in CSV files:
 ## Author
 
 **B S Lakshmi Prerana**  
-Kendriya Vidyalaya AFS Yelahanka, Bengaluru – 560063
 
 ---
 
