@@ -117,7 +117,6 @@ def top3_purchases():
         print("Not enough expenses recorded (need at least 3).")
         return
     print("The top 3 largest purchases are:")
-    s
     sorted_exp = sorted(expenses, key=lambda r: float(r["amount"]), reverse=True)
     for rank, row in enumerate(sorted_exp[:3], start=1):
         print(f"{rank}. ₹{int(float(row['amount']))} | {row['category']} "
